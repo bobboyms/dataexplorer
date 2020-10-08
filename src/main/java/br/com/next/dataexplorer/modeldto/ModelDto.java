@@ -10,8 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 public class ModelDto {
 
-    private Long id;
-    private String name;
-    private String age;
+    private Integer Id;
+    private String Name;
 
 }

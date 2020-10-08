@@ -6,7 +6,7 @@ plugins {
 
 group = 'br.com.next'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '1.8'
 
 configurations {
 	compileOnly {
@@ -20,6 +20,8 @@ repositories {
 
 dependencies {
 	compile 'com.microsoft.azure.kusto:kusto-ingest:2.1.2'
+	compile 'com.azure:azure-messaging-eventhubs:5.1.0'
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.11.3'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
