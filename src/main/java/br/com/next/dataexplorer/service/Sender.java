@@ -71,63 +71,120 @@ public class Sender {
 
     private static void sendDataQuery(String auditId, EventDataBatch batch) throws JsonProcessingException {
 
-        AuditDataQueryModel model = new AuditDataQueryModel();
-        model.setAuditID(auditId);
-        model.setAddTime(1252l);
-        model.setQuery("select * from teste where id = 100");
+        for (int i = 0; i < 11; i++) {
+            AuditDataQueryModel model = new AuditDataQueryModel();
+            model.setAuditID(auditId);
+            model.setAddTime(1252l);
+            model.setQuery("select * from teste where id = " + i);
 
-        final String json = new ObjectMapper().writeValueAsString(model);
-        batch.tryAdd(new EventData(json));
+            final String json = new ObjectMapper().writeValueAsString(model);
+            batch.tryAdd(new EventData(json));
+        }
 
     }
 
     private static void sendDataMethod(String auditId, EventDataBatch batch) throws JsonProcessingException {
 
-        AuditDataMethodModel model = new AuditDataMethodModel();
-        model.setAuditID(auditId);
-        model.setArguments("[a, b, c, d]");
-        model.setReturnValue("{valor de retorno}");
-        model.setClassName("br.com.teste.Audit");
-        model.setMethodName("nomeDoMethodo()");
-        model.setError("---");
-        model.setStartTime(525l);
-        model.setEndTime(1254l);
+        for (int i = 0; i < 7; i++) {
+            AuditDataMethodModel model = new AuditDataMethodModel();
+            model.setAuditID(auditId);
+            model.setArguments("[a, b, c, d]");
+            model.setReturnValue("{valor de retorno}");
+            model.setClassName("br.com.teste.Audit");
+            model.setMethodName("nomeDoMethodo()");
+            model.setError("---");
+            model.setStartTime(525l);
+            model.setEndTime(1254l);
 
 
-        final String json = new ObjectMapper().writeValueAsString(model);
-        batch.tryAdd(new EventData(json));
+            final String json = new ObjectMapper().writeValueAsString(model);
+            batch.tryAdd(new EventData(json));
+        }
 
     }
 
     private static void sendDataCustom(String auditId, EventDataBatch batch) throws JsonProcessingException {
 
-        AuditDataCustomModel model = new AuditDataCustomModel();
-        model.setAuditID(auditId);
-        model.setName("teste custom");
-        model.setCallerClass("br.com.Audit");
-        model.setValue("value");
-        model.setAddTime(100l);
+        for (int i = 0; i < 5; i++) {
+            AuditDataCustomModel model = new AuditDataCustomModel();
+            model.setAuditID(auditId);
+            model.setName("teste custom");
+            model.setCallerClass("br.com.Audit");
+            model.setValue("value");
+            model.setAddTime(100l);
 
-        final String json = new ObjectMapper().writeValueAsString(model);
-        batch.tryAdd(new EventData(json));
+            final String json = new ObjectMapper().writeValueAsString(model);
+            batch.tryAdd(new EventData(json));
+        }
+
+
 
     }
 
     private static void sendDataFeign(String auditId, EventDataBatch batch) throws JsonProcessingException {
 
-        AuditDataDataFeignModel model = new AuditDataDataFeignModel();
-        model.setAuditID(auditId);
-        model.setRequestMethod("GET");
-        model.setRequestURI("/v1/teste/teste");
-        model.setQuery("teste");
-        model.setRequestContent("content");
-        model.setResponseHttpStatus("200");
-        model.setResponseHttpStatusCode(200);
-        model.setResponseContent("reponse contend");
-        model.setResponseContentSize(100);
+        for (int i = 0; i < 10; i++) {
+            AuditDataDataFeignModel model = new AuditDataDataFeignModel();
+            model.setAuditID(auditId);
+            model.setRequestMethod("GET");
+            model.setRequestURI("/v1/teste/teste");
+            model.setQuery("teste");
+            model.setRequestContent("content");
+            model.setResponseHttpStatus("200");
+            model.setResponseHttpStatusCode(200);
+            model.setResponseContent("reponse contend");
+            model.setResponseContentSize(100);
+            model.setElapsedTime(255214l);
+            model.setError("*********");
 
-        final String json = new ObjectMapper().writeValueAsString(model);
-        batch.tryAdd(new EventData(json));
+            final String json = new ObjectMapper().writeValueAsString(model);
+            batch.tryAdd(new EventData(json));
+        }
+
+    }
+
+    private static void sendResponseHeaderFeign(String auditId, EventDataBatch batch) throws JsonProcessingException {
+
+        Map<String, String> header = new HashMap<>();
+        header.put("key Res 1", "value 1");
+        header.put("key Res 2", "value 2");
+        header.put("key Res 3", "value 3");
+
+
+        for (Map.Entry<String, String> entry : header.entrySet()) {
+
+            AuditDataHeaderModel model = new AuditDataHeaderModel();
+            model.setAuditID(auditId);
+            model.setType("RESPONSE");
+            model.setKey(entry.getKey());
+            model.setValue(entry.getValue());
+
+            final String json = new ObjectMapper().writeValueAsString(model);
+            batch.tryAdd(new EventData(json));
+
+        }
+
+    }
+
+    private static void sendRequestHeaderFeign(String auditId, EventDataBatch batch) throws JsonProcessingException {
+
+        Map<String, String> header = new HashMap<>();
+        header.put("key Req 1", "value 1");
+        header.put("key Req 2", "value 2");
+        header.put("key Req 3", "value 3");
+
+        for (Map.Entry<String, String> entry : header.entrySet()) {
+
+            AuditDataHeaderModel model = new AuditDataHeaderModel();
+            model.setAuditID(auditId);
+            model.setType("REQUEST");
+            model.setKey(entry.getKey());
+            model.setValue(entry.getValue());
+
+            final String json = new ObjectMapper().writeValueAsString(model);
+            batch.tryAdd(new EventData(json));
+
+        }
 
     }
 
@@ -151,9 +208,10 @@ public class Sender {
         EventHubProducerClient producerFeign = createEventHubProducerClient("eh-next-audit-data-feign");
         EventDataBatch batchFeign = producerHeader.createBatch();
 
+        EventHubProducerClient producerHeaderFeign = createEventHubProducerClient("eh-next-audit-data-feign-header");
+        EventDataBatch batchHeaderFeign = producerHeader.createBatch();
 
-
-        for (int i = 0; i <= 100; i++) {
+        for (int i = 300; i <= 500; i++) {
 
             final String auditId = String.valueOf(i);
 
@@ -183,36 +241,44 @@ public class Sender {
             model.setResponseHttpStatus("200");
             model.setResponseContent("conteudo");
             model.setResponseContentSize(1024);
+            model.setStartTime(125201l);
+            model.setEndTime(2252255l);
+            model.setError("*********");
 
-//            final String json = new ObjectMapper().writeValueAsString(model);
-//            batch.tryAdd(new EventData(json));
+            final String json = new ObjectMapper().writeValueAsString(model);
+            batch.tryAdd(new EventData(json));
 
-//            sendRequestHeader(auditId, batchHeader);
-//            sendResponseHeader(auditId,batchHeader);
-//            sendDataQuery(auditId, batchQuery);
-//            sendDataMethod(auditId, batchMethod);
-//            sendDataCustom(auditId, batchCustom);
+            sendRequestHeader(auditId, batchHeader);
+            sendResponseHeader(auditId,batchHeader);
+            sendDataQuery(auditId, batchQuery);
+            sendDataMethod(auditId, batchMethod);
+            sendDataCustom(auditId, batchCustom);
             sendDataFeign(auditId, batchFeign);
+            sendRequestHeaderFeign(auditId, batchHeaderFeign);
+            sendResponseHeaderFeign(auditId,batchHeaderFeign);
 
         }
 
-//        producerData.send(batch);
-//        producerData.close();
-//
-//        producerHeader.send(batchHeader);
-//        producerHeader.close();
-//
-//        producerQuery.send(batchQuery);
-//        producerQuery.close();
-//
-//        producerMethod.send(batchMethod);
-//        producerMethod.close();
-//
-//        producerCustom.send(batchCustom);
-//        producerCustom.close();
+        producerData.send(batch);
+        producerData.close();
+
+        producerHeader.send(batchHeader);
+        producerHeader.close();
+
+        producerQuery.send(batchQuery);
+        producerQuery.close();
+
+        producerMethod.send(batchMethod);
+        producerMethod.close();
+
+        producerCustom.send(batchCustom);
+        producerCustom.close();
 
         producerFeign.send(batchFeign);
         producerFeign.close();
+
+        producerHeaderFeign.send(batchHeaderFeign);
+        producerHeaderFeign.close();
 
     }
 
